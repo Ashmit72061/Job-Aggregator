@@ -9,49 +9,49 @@ def scrape_monster_jobs(job_title, location, num_pages=2):
     jobs_list = []
 
     try:
-        base_url = "https://www.monster.com/jobs/search/"
-        query = f"?q={job_title.replace(' ', '-')}&where={location.replace(' ', '-')}"
-        full_url = base_url + query
+    base_url = "https://www.monster.com/jobs/search/"
+    query = f"?q={job_title.replace(' ', '-')}&where={location.replace(' ', '-')}"
+    full_url = base_url + query
 
-        driver.get(full_url)
-        time.sleep(5)
+    driver.get(full_url)
+    time.sleep(5)
 
-        for _ in range(num_pages):
-            print("📄 Scanning page:", driver.current_url)
+    for page in range(num_pages):
+        print(f"📄 Scanning Page {page + 1}: {driver.current_url}")
 
-            job_cards = driver.find_elements(By.CSS_SELECTOR, "section.card-content")
+        job_cards = driver.find_elements(By.CSS_SELECTOR, "div.card-content")
 
-            for card in job_cards:
-                try:
-                    title = card.find_element(By.CSS_SELECTOR, "h2.title").text.strip()
-                    company = card.find_element(By.CSS_SELECTOR, "div.company span.name").text.strip()
-                    loc = card.find_element(By.CSS_SELECTOR, "div.location span.name").text.strip()
-                    link = card.find_element(By.CSS_SELECTOR, "h2.title a").get_attribute("href")
+        print(f"🔍 Found {len(job_cards)} job cards.")
 
-                    jobs_list.append({
-                        "title": title,
-                        "company": company,
-                        "location": loc,
-                        "url": link
-                    })
-                except Exception as e:
-                    print(f"❌ Error extracting job: {e}")
-
-            # Move to next page if exists
+        for card in job_cards:
             try:
-                next_button = driver.find_element(By.CSS_SELECTOR, "a.btn-next")
-                next_button.click()
-                time.sleep(4)
-            except:
-                print("🚫 No more pages.")
+                title = card.find_element(By.CSS_SELECTOR, "h2.title > a").text.strip()
+                url = card.find_element(By.CSS_SELECTOR, "h2.title > a").get_attribute("href")
+                company = card.find_element(By.CSS_SELECTOR, "div.company > span.name").text.strip()
+                location = card.find_element(By.CSS_SELECTOR, "div.location > span.name").text.strip()
+
+                jobs_list.append({
+                    "title": title,
+                    "company": company,
+                    "location": location,
+                    "url": url
+                })
+            except Exception as e:
+                print(f"❌ Error extracting job: {e}")
+
+        # Try to go to the next page
+        try:
+            next_button = driver.find_element(By.CSS_SELECTOR, "a.btn-next")
+            if "disabled" in next_button.get_attribute("class"):
+                print("⛔ Next button disabled.")
                 break
+            next_button.click()
+            time.sleep(4)
+        except Exception as e:
+            print("🚫 No more pages or next button not found.")
+            break
 
-    finally:
-        driver.quit()
+finally:
+    driver.quit()
 
-    return pd.DataFrame(jobs_list)
-
-# Example usage
-df = scrape_monster_jobs("Machine Learning Engineer", "New Delhi", num_pages=3)
-df.to_csv("monster_jobs.csv", index=False)
-print("✅ Job data saved to monster_jobs.csv")
+return pd.DataFrame(jobs_list)
