@@ -58,4 +58,10 @@ def scrape_monster_jobs(job_title, location, num_pages=2):
     
     # Usage
 df = scrape_monster_jobs("Machine Learning", "New Delhi", num_pages=2)
+<<<<<<< HEAD
 df.to_csv("monster_jobs.csv", index=False)
+=======
+df.to_csv("monster_jobs.csv", index=False)
+    
+    
+>>>>>>> e317a9e2a4869769022c7cc2deb8aa8425b03256
