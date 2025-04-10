@@ -57,7 +57,7 @@ def scrape_monster_jobs(job_title, location, num_pages=2):
     return pd.DataFrame(jobs_list)
     
     # Usage
-df = scrape_indeed_with_selenium("Machine Learning", "New Delhi", num_pages=2)
+df = scrape_monster_jobs("Machine Learning", "New Delhi", num_pages=2)
 df.to_csv("monster_jobs.csv", index=False)
     
     
