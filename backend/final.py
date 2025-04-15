@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import pandas as pd
 
-import naukri
+import naukri-scrapper
 
 
 """PART-1   Extracting the skills from resume    """
