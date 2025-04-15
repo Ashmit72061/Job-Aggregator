@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 import pandas as pd
 
-import naukri-scrapper
+
 
 
 """PART-1   Extracting the skills from resume    """
@@ -796,6 +796,7 @@ def suggest_jobs(skills_input):
     return recomm_jobs
 
 """Part 3"""
+import naukri-scrapper
 
 if __name__ == "__main__":
     skills = extract_resume_skills("Ashmit123.pdf")
