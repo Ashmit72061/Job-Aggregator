@@ -4,6 +4,7 @@ import { useState } from "react";
 export default function Resume() {
   const [file, setFile] = useState(null);
   const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false); // New state for loading
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -12,16 +13,23 @@ export default function Resume() {
   const handleUpload = async () => {
     if (!file) return;
 
+    setLoading(true); // Start loading
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("http://127.0.0.1:8080/upload", {
-      method: "POST",
-      body: formData,
-    });
+    try {
+      const res = await fetch("http://127.0.0.1:8080/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    const json = await res.json();
-    setData(json);
+      const json = await res.json();
+      setData(json);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setLoading(false); // Stop loading in all cases
+    }
   };
 
   return (
@@ -41,9 +49,10 @@ export default function Resume() {
         </div>
         <button
           onClick={handleUpload}
-          className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition duration-300"
+          disabled={loading}
+          className="mt-6 w-full bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg transition duration-300 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          Find Jobs
+          {loading ? "Loading..." : "Find Jobs"}
         </button>
       </div>
 
